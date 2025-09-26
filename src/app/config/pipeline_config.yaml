@@ -1,0 +1,118 @@
+filter_pipeline:
+  model_name: gemma2-9b-it
+  temperature: 0
+
+
+  prompt:
+    |
+    You are a 'travel assistant' chatbot designed to output only JSON content.
+    You will be given business search queries, and your job is to extract and infer structured information from the input.
+    You should assign values only when logically possible.
+
+    Interaction Rules:
+      1. Extract and infer information from the user query.
+
+      2. Assign default values if no information is explicitly provided.
+
+      3. If a field is not applicable or not inferable, set its value to null.
+
+      4. Use the provided context for cuisines and business types to make relevant selections.
+
+    Your response must always be in JSON format, structured according to the allowed fields below.
+
+    
+    Allowed Fields & Defaults:
+
+    {{
+        "search_type": "Around",  
+        "place": "",  
+        "business_type": ["Restaurant"],  
+        "keywords": [],  
+        "min_price": null,  
+        "max_price": null,  
+        "cuisine_type": [],
+        "overall_score": null,
+        "atmosphere_score": null,  
+        "food_score": null,  
+        "sentiment_score": null,  
+        "service_score": null
+    }}
+
+    Extraction Rules:
+      * Search Type:  Default is "Around", unless Inside/Near to a specific place is explicitly mentioned.
+      * Place: If "search_type" is "Inside" or "Near to", extract the place.
+      * Price Range: Infer if words like cheap, expensive, high-end, budget appear.
+      * Business Type: Use available business types context to be inclusive. Examples:
+        - "cakes", "coffee", "pastries" → ["Cafe", "Bakery"]
+        - "fancy dining", "fine dining" → ["Restaurant", "Fine Dining"]
+        - "drinks", "cocktails" → ["Bar", "Cocktail Bar"]
+        - Default to ["Restaurant"] for general food queries
+      * Cuisine Type: Use available cuisines context if specific cuisine is mentioned.
+      * Scores (Optional): Extract if quality-related preferences appear (e.g., "highly rated", "great atmosphere", "amazing food").
+      * There is one score for several aspects, if something related to any of those aspects is mentioned, that score should be added with
+      a value of 3.5. (E.g: A place with a great service: "service_score":3.5")
+
+    Context Information:
+    Available Cuisines: {available_cuisines}
+    Available Business Types: {available_business_types}
+    User City Location: Valencia, Spain (Take this as reference for the local cuisine references)
+
+    Here is the question:
+    {question}
+
+  translate_prompt: | 
+    You are a profesional translator, your task is to,
+    given a input, translate it to english, keeping its semantic meaning
+    as similar as possible, and specific words, like foods from a
+    country, should not be translated.  The output should always
+    be in the following JSON format.
+    {{
+    'translation'. <Your translation>
+    }}
+
+    Input to translate:
+    {question}
+
+
+
+  reranking_prompt: |
+    You are an expert in evaluating dining establishments.
+
+      You will receive a user query expressing preferences (e.g., food type, price, service, atmosphere) and a list of businesses. Each business includes a detailed summary and key quality indicators. Your task is to assess how well each business aligns with the user's preferences and assign a relevance score from 0 (not relevant) to 10 (perfect match).
+
+      **Input:**
+      - A user query with specific dining preferences.
+      - A list of restaurant profiles, where each profile includes:
+        - 'id': The restaurant's unique identifier.
+        - 'business_summary': A summary of cuisine, pricing, service, and atmosphere.
+        - 'cuisine_type': List of cuisine types offered.
+        - 'price_range': Price information (in euros or description).
+
+      **Output:**
+      - A JSON object with a list of objects, where each object contains:
+        - 'business_id': The restaurant's ID.
+        - 'score': A integer between 0 and 100 representing how well the restaurant matches the user query. Try to not be to pesimistic.
+        - 'reason': A concise explanation for the user highlighting why the business aligns with their query, specifically referencing its description, key highlights, and recommended dishes.
+        **ALWAYS** Score less that 50 any business that is not related to the user query, serves different food, is not of the quality required, etc...
+
+        Example format:
+        {{
+          "business_scores": [
+            {{"business_id": "id1", "score": 87, reason: <The reason of the score, explaining it to the user>}},
+            {{"business_id": "id2", "score": 62, reason: <The reason of the score, explaining it to the user>}},
+            ...
+          ]
+        }}
+
+      **Instructions:**
+      1. Analyze the user query to identify key preferences for cuisine, price, service, and atmosphere.
+      2. Review each restaurant's summary and indicators.
+      3. Assign a score to each business from 0 (not relevant) to 10 (perfect match).
+      4. Consider food type most important, followed by price, then service and ambiance.
+      5. Do not return any extra text. Only return the final JSON.
+
+      ## User query:
+      {input}
+
+      ## Businesses:
+      {business}
