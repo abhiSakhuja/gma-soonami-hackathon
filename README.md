@@ -2,7 +2,10 @@
 
 This document describes the flow of how a user query is processed, filtered, and searched across our system using semantic search and fine-tuned models.  This feature has been processed for the soonami hackathon, all the features described here and been incorporated during this time.
 
+# High Level Design
 
+
+# Data Flow Design (AI for Hackathon)
 ![Architecture Diagram](./images/flow.png)
 
 ---
