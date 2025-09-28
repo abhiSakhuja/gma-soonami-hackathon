@@ -5,8 +5,8 @@ This document describes the flow of how a user query is processed, filtered, and
 # High Level Design
 ![Architecture Diagram](./images/GMA_High_Level_Design.jpg)
 
-# Data Flow Design (AI for Hackathon)
-![Data Flow Design](./images/flow.png)
+# User Query Flow Design (AI for Hackathon)
+![User Query Flow Design](./images/flow.png)
 
 ---
 
