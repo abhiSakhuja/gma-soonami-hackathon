@@ -14,7 +14,7 @@ This document describes the flow of how a user query is processed, filtered, and
 
 ### 1. User Query
 The system receives:
-- A **query** (e.g., “best Italian restaurants in New York, open now”)  
+- A **query** (e.g., “find the best Italian restaurants in Valencia, open now”)  
 - Original **filters** (optional, such as location, price range, etc.)  
 
 ---
