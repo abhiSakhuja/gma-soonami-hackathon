@@ -39,7 +39,7 @@ A **Lambda service** retrieves an initial set of candidate record IDs from **Dyn
 ---
 
 ### 5. Semantic Search
-The retrieved IDs are matched **semantically** using **Pinecone** (via another Lambda service).  
+The retrieved IDs are matched **semantically** using **Pinecone (to be replaced by opensearch)**  (via another Lambda service).  
 - This step uses a **fine-tuned embedding model**, trained on our in-house dataset, to compute similarity.  
 
 ---
@@ -59,7 +59,7 @@ The system returns the final ranked list of results (chunks) to the user.
 ## 📌 Components Overview
 - **Locations DB** → Stores cities, regions, and location references.  
 - **DynamoDB** → Stores record metadata and IDs.  
-- **Lambda Services** → Orchestrate DynamoDB retrieval and Pinecone search.  
-- **Pinecone** → Vector database for semantic similarity search (will be replaced using OpenSearch)
+- **Lambda Services** → Orchestrate DynamoDB retrieval and Pinecone (to be replaced by OpenSearch) search.  
+- **Pinecone** → Vector database for semantic similarity search (to be replaced by OpenSearch)
 - **Fine-tuned Model** → Embedding model trained on our dataset for domain-specific semantic matching.  
 - **LLM** → Provides final reranking and reasoning for transparency.  
