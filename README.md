@@ -39,7 +39,7 @@ A **Lambda service** retrieves an initial set of candidate record IDs from **Dyn
 ---
 
 ### 5. Semantic Search
-The retrieved IDs are matched **semantically** using **Pinecone (to be replaced by opensearch)**  (via another Lambda service).  
+The retrieved IDs are matched **semantically** using **Pinecone (to be replaced by OpenSearch)**  (via another Lambda service).  
 - This step uses a **fine-tuned embedding model**, trained on our in-house dataset, to compute similarity.  
 
 ---
