@@ -60,6 +60,6 @@ The system returns the final ranked list of results (chunks) to the user.
 - **Locations DB** → Stores cities, regions, and location references.  
 - **DynamoDB** → Stores record metadata and IDs.  
 - **Lambda Services** → Orchestrate DynamoDB retrieval and Pinecone search.  
-- **Pinecone** → Vector database for semantic similarity search.  
+- **Pinecone** → Vector database for semantic similarity search (will be replaced using OpenSearch)
 - **Fine-tuned Model** → Embedding model trained on our dataset for domain-specific semantic matching.  
 - **LLM** → Provides final reranking and reasoning for transparency.  
